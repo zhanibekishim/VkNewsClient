@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.example.vknewsclient.MainViewModel
+import com.example.vknewsclient.domain.Comment
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -26,57 +27,63 @@ fun HomeScreen(
     paddingValues: PaddingValues,
 ) {
     val feedPosts = viewModel.feedPosts.observeAsState(listOf())
-    LazyColumn(
-        modifier = Modifier.padding(paddingValues),
-        contentPadding = PaddingValues(
-            top = 16.dp,
-            start = 8.dp,
-            end = 8.dp,
-            bottom = 72.dp
-        ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(feedPosts.value, key = {it.id}){feedPost->
-            val dismissThresholds =  with(LocalDensity.current){
-                LocalConfiguration.current.screenWidthDp.dp.toPx()*0.5F
-            }
-            val dismissBoxState = rememberSwipeToDismissBoxState(
-                positionalThreshold = {dismissThresholds},
-                confirmValueChange = {value ->
-                    val isDismissed = value in setOf(
-                        SwipeToDismissBoxValue.StartToEnd,
-                        SwipeToDismissBoxValue.EndToStart
-                    )
-                    if(isDismissed) viewModel.remove(feedPost)
-                    return@rememberSwipeToDismissBoxState isDismissed
-                }
-            )
-            SwipeToDismissBox(
-                modifier = Modifier.animateItemPlacement(animationSpec = tween(durationMillis = 300)),
-                enableDismissFromEndToStart = true,
-                enableDismissFromStartToEnd = false,
-                state = dismissBoxState,
-                backgroundContent = {},
-
-                ) {
-                PostCard(
-                    modifier = Modifier,
-                    feedPost = feedPost,
-                    onViewsClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
-                    onLikesClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
-                    onSharesClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
-                    onCommentClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    }
-                )
-            }
-
+    if (feedPosts.value.isNotEmpty()) {
+        val comments = mutableListOf<Comment>().apply {
+            repeat(20) { add(Comment(id = it)) }
         }
+        CommentsScreen(feedPost = feedPosts.value[0], comments = comments)
     }
+//    LazyColumn(
+//        modifier = Modifier.padding(paddingValues),
+//        contentPadding = PaddingValues(
+//            top = 16.dp,
+//            start = 8.dp,
+//            end = 8.dp,
+//            bottom = 72.dp
+//        ),
+//        verticalArrangement = Arrangement.spacedBy(8.dp)
+//    ) {
+//        items(feedPosts.value, key = {it.id}){feedPost->
+//            val dismissThresholds =  with(LocalDensity.current){
+//                LocalConfiguration.current.screenWidthDp.dp.toPx()*0.5F
+//            }
+//            val dismissBoxState = rememberSwipeToDismissBoxState(
+//                positionalThreshold = {dismissThresholds},
+//                confirmValueChange = {value ->
+//                    val isDismissed = value in setOf(
+//                        SwipeToDismissBoxValue.StartToEnd,
+//                        SwipeToDismissBoxValue.EndToStart
+//                    )
+//                    if(isDismissed) viewModel.remove(feedPost)
+//                    return@rememberSwipeToDismissBoxState isDismissed
+//                }
+//            )
+//            SwipeToDismissBox(
+//                modifier = Modifier.animateItemPlacement(animationSpec = tween(durationMillis = 300)),
+//                enableDismissFromEndToStart = true,
+//                enableDismissFromStartToEnd = false,
+//                state = dismissBoxState,
+//                backgroundContent = {},
+//
+//                ) {
+//                PostCard(
+//                    modifier = Modifier,
+//                    feedPost = feedPost,
+//                    onViewsClickListener = { statisticItem ->
+//                        viewModel.updateCount(feedPost, statisticItem)
+//                    },
+//                    onLikesClickListener = { statisticItem ->
+//                        viewModel.updateCount(feedPost, statisticItem)
+//                    },
+//                    onSharesClickListener = { statisticItem ->
+//                        viewModel.updateCount(feedPost, statisticItem)
+//                    },
+//                    onCommentClickListener = { statisticItem ->
+//                        viewModel.updateCount(feedPost, statisticItem)
+//                    }
+//                )
+//            }
+//
+//        }
+//    }
 }
