@@ -54,6 +54,7 @@ dependencies {
     // Зависимости для Jetpack Compose
     implementation ("androidx.compose.runtime:runtime-livedata:1.5.0")
 
+    implementation( "androidx.navigation:navigation-compose:2.7.7")
 
     implementation("androidx.compose.material:material:1.4.3") // Для Material Components, включая Snackbar и BottomNavigation
     implementation("androidx.compose.material:material-icons-core:1.4.3") // Для иконок
