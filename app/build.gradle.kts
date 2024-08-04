@@ -59,6 +59,11 @@ dependencies {
     implementation("androidx.compose.material:material:1.4.3") // Для Material Components, включая Snackbar и BottomNavigation
     implementation("androidx.compose.material:material-icons-core:1.4.3") // Для иконок
     implementation("androidx.compose.material:material-icons-extended:1.4.3") // Для расширенных иконок
+
+    implementation ("androidx.compose.ui:ui:1.3.0")
+    implementation ("androidx.compose.material3:material3:1.0.0")
+    implementation ("androidx.compose.ui:ui-tooling-preview:1.3.0")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.25.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
