@@ -59,7 +59,7 @@ dependencies {
     implementation("androidx.compose.material:material:1.4.3") // Для Material Components, включая Snackbar и BottomNavigation
     implementation("androidx.compose.material:material-icons-core:1.4.3") // Для иконок
     implementation("androidx.compose.material:material-icons-extended:1.4.3") // Для расширенных иконок
-
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
     implementation ("androidx.compose.ui:ui:1.3.0")
     implementation ("androidx.compose.material3:material3:1.0.0")
     implementation ("androidx.compose.ui:ui-tooling-preview:1.3.0")

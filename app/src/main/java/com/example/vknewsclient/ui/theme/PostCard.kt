@@ -30,6 +30,7 @@ import com.example.vknewsclient.R
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.domain.StatisticItem
 import com.example.vknewsclient.domain.StatisticType
+import com.example.vknewsclient.ui.theme.design.VkNewsClientTheme
 
 @Composable
 fun PostCard(

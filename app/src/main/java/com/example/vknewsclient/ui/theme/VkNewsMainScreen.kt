@@ -3,28 +3,42 @@ package com.example.vknewsclient.ui.theme
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.vknewsclient.MainViewModel
+import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.navigation.AppNavGraph
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen() {
     val navHostController = rememberNavController()
+
+    val commentsToPost: MutableState<FeedPost?> = remember {
+        mutableStateOf(null)
+    }
+
     Scaffold(
         modifier = Modifier.padding(bottom = 36.dp),
         bottomBar = {
-            BottomNavigation {
+            BottomNavigation(
+                backgroundColor = Color.Black, contentColor = Color.White
+            ) {
                 val navBackStackEntry by navHostController.currentBackStackEntryAsState()
                 val currentRout = navBackStackEntry?.destination?.route
 
@@ -43,8 +57,8 @@ fun MainScreen(viewModel: MainViewModel) {
                         label = {
                             Text(text = stringResource(id = item.titleResId))
                         },
-                        selectedContentColor = MaterialTheme.colorScheme.onPrimary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSecondary
+                        selectedContentColor = Color.Green,
+                        unselectedContentColor = Color.White
                     )
                 }
             }
@@ -53,10 +67,18 @@ fun MainScreen(viewModel: MainViewModel) {
         AppNavGraph(
             navHostController = navHostController,
             homeScreenContent = {
-                HomeScreen(
-                    viewModel = viewModel,
-                    paddingValues = paddingValues
-                )
+                if (commentsToPost.value == null) {
+                    HomeScreen(
+                        paddingValues = paddingValues,
+                        onCommentClickListener = {
+                            commentsToPost.value = it
+                        }
+                    )
+                }else {
+                    CommentsScreen {
+                        commentsToPost.value = null
+                    }
+                }
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = { TextCounter(name = "Profile") }
@@ -67,7 +89,7 @@ fun MainScreen(viewModel: MainViewModel) {
 @Composable
 private fun TextCounter(name: String) {
     var count by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
     Text(
