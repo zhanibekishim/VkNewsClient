@@ -2,7 +2,7 @@ package com.example.vknewsclient.domain
 
 import com.example.vknewsclient.R
 
-data class Comment(
+data class CommentPost(
     val id :Int,
     val contentText:String = "Long comment text",
     val publicationDate:String = "14:00",

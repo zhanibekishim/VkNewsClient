@@ -1,5 +1,6 @@
 package com.example.vknewsclient.ui.theme
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.example.vknewsclient.MainViewModel
-import com.example.vknewsclient.domain.Comment
+import com.example.vknewsclient.domain.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -26,64 +27,87 @@ fun HomeScreen(
     viewModel: MainViewModel,
     paddingValues: PaddingValues,
 ) {
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
-    if (feedPosts.value.isNotEmpty()) {
-        val comments = mutableListOf<Comment>().apply {
-            repeat(20) { add(Comment(id = it)) }
+    val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
+    when (val currentState = screenState.value) {
+        is HomeScreenState.Posts -> {
+            FeedPosts(
+                viewModel = viewModel,
+                paddingValues = paddingValues,
+                posts = currentState.posts
+            )
         }
-        CommentsScreen(feedPost = feedPosts.value[0], comments = comments)
+        is HomeScreenState.Comments -> {
+            CommentsScreen(feedPost = currentState.feedPost, comments= currentState.comments){
+                viewModel.closeComments()
+            }
+            BackHandler {
+                viewModel.closeComments()
+            }
+        }
+        HomeScreenState.Initial -> {
+
+        }
     }
-//    LazyColumn(
-//        modifier = Modifier.padding(paddingValues),
-//        contentPadding = PaddingValues(
-//            top = 16.dp,
-//            start = 8.dp,
-//            end = 8.dp,
-//            bottom = 72.dp
-//        ),
-//        verticalArrangement = Arrangement.spacedBy(8.dp)
-//    ) {
-//        items(feedPosts.value, key = {it.id}){feedPost->
-//            val dismissThresholds =  with(LocalDensity.current){
-//                LocalConfiguration.current.screenWidthDp.dp.toPx()*0.5F
-//            }
-//            val dismissBoxState = rememberSwipeToDismissBoxState(
-//                positionalThreshold = {dismissThresholds},
-//                confirmValueChange = {value ->
-//                    val isDismissed = value in setOf(
-//                        SwipeToDismissBoxValue.StartToEnd,
-//                        SwipeToDismissBoxValue.EndToStart
-//                    )
-//                    if(isDismissed) viewModel.remove(feedPost)
-//                    return@rememberSwipeToDismissBoxState isDismissed
-//                }
-//            )
-//            SwipeToDismissBox(
-//                modifier = Modifier.animateItemPlacement(animationSpec = tween(durationMillis = 300)),
-//                enableDismissFromEndToStart = true,
-//                enableDismissFromStartToEnd = false,
-//                state = dismissBoxState,
-//                backgroundContent = {},
-//
-//                ) {
-//                PostCard(
-//                    modifier = Modifier,
-//                    feedPost = feedPost,
-//                    onViewsClickListener = { statisticItem ->
-//                        viewModel.updateCount(feedPost, statisticItem)
-//                    },
-//                    onLikesClickListener = { statisticItem ->
-//                        viewModel.updateCount(feedPost, statisticItem)
-//                    },
-//                    onSharesClickListener = { statisticItem ->
-//                        viewModel.updateCount(feedPost, statisticItem)
-//                    },
-//                    onCommentClickListener = { statisticItem ->
-//                        viewModel.updateCount(feedPost, statisticItem)
-//                    }
-//                )
-//            }
-//
-//        }
-//    }
+
+}
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun FeedPosts(
+    viewModel: MainViewModel,
+    paddingValues: PaddingValues,
+    posts:List<FeedPost>
+){
+    LazyColumn(
+        modifier = Modifier.padding(paddingValues),
+        contentPadding = PaddingValues(
+            top = 16.dp,
+            start = 8.dp,
+            end = 8.dp,
+            bottom = 72.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(posts, key = {it.id}){feedPost->
+            val dismissThresholds =  with(LocalDensity.current){
+                LocalConfiguration.current.screenWidthDp.dp.toPx()*0.5F
+            }
+            val dismissBoxState = rememberSwipeToDismissBoxState(
+                positionalThreshold = {dismissThresholds},
+                confirmValueChange = {value ->
+                    val isDismissed = value in setOf(
+                        SwipeToDismissBoxValue.StartToEnd,
+                        SwipeToDismissBoxValue.EndToStart
+                    )
+                    if(isDismissed) viewModel.remove(feedPost)
+                    return@rememberSwipeToDismissBoxState isDismissed
+                }
+            )
+            SwipeToDismissBox(
+                modifier = Modifier.animateItemPlacement(animationSpec = tween(durationMillis = 300)),
+                enableDismissFromEndToStart = true,
+                enableDismissFromStartToEnd = false,
+                state = dismissBoxState,
+                backgroundContent = {},
+
+                ) {
+                PostCard(
+                    modifier = Modifier,
+                    feedPost = feedPost,
+                    onViewsClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                    onLikesClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                    onSharesClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                    onCommentClickListener = {
+                        viewModel.showComments(feedPost)
+
+                    }
+                )
+            }
+        }
+    }
 }

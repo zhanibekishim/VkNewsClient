@@ -2,6 +2,7 @@ package com.example.vknewsclient.ui.theme
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vknewsclient.MainViewModel
@@ -20,6 +22,7 @@ import com.example.vknewsclient.navigation.AppNavGraph
 fun MainScreen(viewModel: MainViewModel) {
     val navHostController = rememberNavController()
     Scaffold(
+        modifier = Modifier.padding(bottom = 36.dp),
         bottomBar = {
             BottomNavigation {
                 val navBackStackEntry by navHostController.currentBackStackEntryAsState()

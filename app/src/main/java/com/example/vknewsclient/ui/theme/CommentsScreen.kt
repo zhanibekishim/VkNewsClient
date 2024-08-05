@@ -30,15 +30,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.vknewsclient.domain.Comment
+import com.example.vknewsclient.domain.CommentPost
 import com.example.vknewsclient.domain.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CommentsScreen(
-    comments: List<Comment>,
-    feedPost: FeedPost
+    comments: List<CommentPost>,
+    feedPost: FeedPost,
+    backPressed: () -> Unit = {}
 ){
     Scaffold(
         topBar = {
@@ -46,7 +47,7 @@ fun CommentsScreen(
                 Text(modifier = Modifier.background(
                     Color.Gray.copy(alpha = 0.2f)),
                     text = "Comments for FeedPost ID: ${feedPost.id}")
-            }, navigationIcon = { IconButton(onClick = {}) {
+            }, navigationIcon = { IconButton(onClick = {backPressed()}) {
                 Icon(Icons.Filled.ArrowBack, contentDescription = null)
             }
             })
@@ -61,8 +62,8 @@ fun CommentsScreen(
                 bottom = 72.dp
             )
         ) {
-            items(items = comments,key = {it.id}){comment ->
-                CommentItem(comment = comment)
+            items(items = comments,key = {it.id}){ comment ->
+                CommentItem(commentPost = comment)
             }
         }
     }
@@ -70,7 +71,7 @@ fun CommentsScreen(
 
 @Composable
 private fun CommentItem(
-    comment: Comment
+    commentPost: CommentPost
 ) {
     Row(
         modifier = Modifier
@@ -82,26 +83,26 @@ private fun CommentItem(
     ) {
         Image(
             modifier = Modifier.size(24.dp),
-            painter = painterResource(id = comment.authorAvatarId),
+            painter = painterResource(id = commentPost.authorAvatarId),
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "${comment.authorName} CommentId: ${comment.id}",
+                text = "${commentPost.authorName} CommentId: ${commentPost.id}",
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 12.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = comment.contentText,
+                text = commentPost.contentText,
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text (
 
-                text = comment.publicationDate,
+                text = commentPost.publicationDate,
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 12.sp
             )
