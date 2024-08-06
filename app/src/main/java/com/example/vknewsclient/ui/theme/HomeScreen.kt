@@ -37,6 +37,7 @@ fun HomeScreen(
                 posts = currentState.posts,
                 onCommentClickListener = onCommentClickListener
             )
+            
         }
         NewsFeedScreenState.Initial -> {
         }

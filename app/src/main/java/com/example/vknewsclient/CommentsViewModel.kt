@@ -3,20 +3,20 @@ package com.example.vknewsclient
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vknewsclient.domain.CommentPost
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.ui.theme.CommentsScreenState
 
-class CommentsViewModel:ViewModel() {
+class CommentsViewModel(feedPost: FeedPost)
+    :ViewModel() {
 
     private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState> = _screenState
 
     init {
-        loadData(feedPost = FeedPost())
+        loadComments(feedPost = feedPost)
     }
-    fun loadData(feedPost: FeedPost){
+    private fun loadComments(feedPost: FeedPost){
         val comments = mutableListOf<CommentPost>().apply {
             repeat(10){ add(CommentPost(id = it)) }
         }
