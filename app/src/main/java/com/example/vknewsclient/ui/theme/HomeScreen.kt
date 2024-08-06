@@ -17,15 +17,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.example.vknewsclient.MainViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.vknewsclient.NewsFeedViewModel
+import com.example.vknewsclient.domain.FeedPost
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
 @Composable
 fun HomeScreen(
-    viewModel: MainViewModel,
     paddingValues: PaddingValues,
+    onCommentClickListener : (FeedPost) -> Unit
 ) {
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+    val viewModel :NewsFeedViewModel = viewModel()
+    val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
+    when (val currentState = screenState.value) {
+        is NewsFeedScreenState.Posts -> {
+            FeedPosts(
+                viewModel = viewModel,
+                paddingValues = paddingValues,
+                posts = currentState.posts,
+                onCommentClickListener = onCommentClickListener
+            )
+            
+        }
+        NewsFeedScreenState.Initial -> {
+        }
+    }
+
+}
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun FeedPosts(
+    viewModel: NewsFeedViewModel,
+    paddingValues: PaddingValues,
+    posts:List<FeedPost>,
+    onCommentClickListener : (FeedPost) -> Unit
+){
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
@@ -36,7 +62,7 @@ fun HomeScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(feedPosts.value, key = {it.id}){feedPost->
+        items(posts, key = {it.id}){feedPost->
             val dismissThresholds =  with(LocalDensity.current){
                 LocalConfiguration.current.screenWidthDp.dp.toPx()*0.5F
             }
@@ -71,12 +97,11 @@ fun HomeScreen(
                     onSharesClickListener = { statisticItem ->
                         viewModel.updateCount(feedPost, statisticItem)
                     },
-                    onCommentClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
+                    onCommentClickListener = {
+                        onCommentClickListener(feedPost)
                     }
                 )
             }
-
         }
     }
 }

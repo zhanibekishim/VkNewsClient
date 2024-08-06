@@ -15,7 +15,7 @@ sealed class NavigationItem(
 ) {
 
     data object Home : NavigationItem(
-        screen = Screen.NewsFeed,
+        screen = Screen.Home,
         titleResId = R.string.home_title,
         icon = Icons.Outlined.Home
     )
