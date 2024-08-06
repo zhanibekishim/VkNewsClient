@@ -8,7 +8,6 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.Scaffold
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -20,14 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.navigation.AppNavGraph
+import com.example.vknewsclient.navigation.Screen
+import com.example.vknewsclient.navigation.rememberNavigationState
 
 @Composable
 fun MainScreen() {
-    val navHostController = rememberNavController()
+    val navigationState = rememberNavigationState()
 
     val commentsToPost: MutableState<FeedPost?> = remember {
         mutableStateOf(null)
@@ -39,8 +40,7 @@ fun MainScreen() {
             BottomNavigation(
                 backgroundColor = Color.Black, contentColor = Color.White
             ) {
-                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
-                val currentRout = navBackStackEntry?.destination?.route
+                val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
 
                 val items = listOf(
                     NavigationItem.Home,
@@ -48,9 +48,12 @@ fun MainScreen() {
                     NavigationItem.Profile
                 )
                 items.forEach { item ->
+                    val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                        it.route == item.screen.route
+                    } ?: false
                     BottomNavigationItem(
-                        selected = currentRout == item.screen.route,
-                        onClick = { navHostController.navigate(item.screen.route) },
+                        selected = selected,
+                        onClick = { if(!selected){navigationState.navigateTo(item.screen.route)} },
                         icon = {
                             Icon(item.icon, contentDescription = null)
                         },
@@ -63,22 +66,25 @@ fun MainScreen() {
                 }
             }
         }
-    ) { paddingValues ->
+    ){ paddingValues ->
         AppNavGraph(
-            navHostController = navHostController,
-            homeScreenContent = {
-                if (commentsToPost.value == null) {
-                    HomeScreen(
-                        paddingValues = paddingValues,
-                        onCommentClickListener = {
-                            commentsToPost.value = it
-                        }
-                    )
-                }else {
-                    CommentsScreen(feedPost = commentsToPost.value!!, onBackPressed = {
-                        commentsToPost.value = null
-                    })
-                }
+            navHostController = navigationState.navHostController,
+            newsFeedScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentClickListener = {
+                        commentsToPost.value = it
+                        navigationState.navigateToComments()
+                    }
+                )
+            },
+            commentsScreenContent = {
+                CommentsScreen(
+                    onBackPressed = {
+                        navigationState.navHostController.popBackStack()
+                    },
+                    feedPost = commentsToPost.value!!
+                )
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = { TextCounter(name = "Profile") }
