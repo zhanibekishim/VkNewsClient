@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import com.example.vknewsclient.ui.theme.ActivityResultApiTest
 import com.example.vknewsclient.ui.theme.MainScreen
 import com.example.vknewsclient.ui.theme.design.VkNewsClientTheme
 
@@ -15,7 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             VkNewsClientTheme {
-                MainScreen()
+                ActivityResultApiTest()
             }
         }
     }
