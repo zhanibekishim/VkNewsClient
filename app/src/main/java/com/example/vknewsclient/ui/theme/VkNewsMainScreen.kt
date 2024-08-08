@@ -34,7 +34,7 @@ fun MainScreen() {
     }
 
     Scaffold(
-        modifier = Modifier.padding(bottom = 36.dp),
+        modifier = Modifier.padding(bottom = 0.dp),
         bottomBar = {
             BottomNavigation(
                 backgroundColor = Color.Black, contentColor = Color.White
