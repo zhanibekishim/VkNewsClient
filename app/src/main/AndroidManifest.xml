@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <meta-data
+        android:name="VKIDClientID"
+        android:value="${VKIDClientID}" />
+    <meta-data
+        android:name="VKIDClientSecret"
+        android:value="${VKIDClientSecret}" />
+    <meta-data
+        android:name="VKIDRedirectHost"
+        android:value="${VKIDRedirectHost}" />
+    <meta-data
+        android:name="VKIDRedirectScheme"
+        android:value="${VKIDRedirectScheme}" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -24,5 +38,6 @@
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>
