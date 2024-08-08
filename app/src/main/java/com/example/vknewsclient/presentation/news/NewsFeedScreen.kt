@@ -1,4 +1,4 @@
-package com.example.vknewsclient.ui.theme
+package com.example.vknewsclient.presentation.news
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,16 +18,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.vknewsclient.NewsFeedViewModel
 import com.example.vknewsclient.domain.FeedPost
 
 
 @Composable
-fun HomeScreen(
+fun NewsFeedScreen(
     paddingValues: PaddingValues,
     onCommentClickListener : (FeedPost) -> Unit
 ) {
-    val viewModel :NewsFeedViewModel = viewModel()
+    val viewModel : NewsFeedViewModel = viewModel()
     val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
     when (val currentState = screenState.value) {
         is NewsFeedScreenState.Posts -> {
