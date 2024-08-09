@@ -22,6 +22,8 @@ import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.domain.StatisticItem
 import com.example.vknewsclient.domain.StatisticType
 import com.example.vknewsclient.R
+import com.example.vknewsclient.ui.theme.design.BEIGE
+import com.example.vknewsclient.ui.theme.design.DarkRed
 
 
 @Composable
@@ -58,7 +60,7 @@ fun PostCard(
                 onCommentClickListener = onCommentClickListener,
                 onShareClickListener = onShareClickListener,
                 onViewsClickListener = onViewsClickListener,
-                isFavorite = feedPost.isFavorite
+                isFavorite = feedPost.isLiked
             )
         }
     }
@@ -100,7 +102,6 @@ private fun PostHeader(
         )
     }
 }
-
 @Composable
 private fun Statistics(
     statistics: List<StatisticItem>,
@@ -121,7 +122,7 @@ private fun Statistics(
                 onItemClickListener = {
                     onViewsClickListener(viewsItem)
                 },
-                tint = Color.Red.copy(alpha = (if (isFavorite) 1f else MaterialTheme.colors.onSecondary) as Float)
+                tint =  Color.Black.copy(alpha = 0.4f)
             )
         }
         Row(
@@ -135,7 +136,7 @@ private fun Statistics(
                 onItemClickListener = {
                     onShareClickListener(sharesItem)
                 },
-                tint = Color.Red.copy(alpha = (if (isFavorite) 1f else MaterialTheme.colors.onSecondary) as Float)
+                tint =  Color.Black.copy(alpha = 0.4f)
             )
             val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
             IconWithText(
@@ -144,20 +145,21 @@ private fun Statistics(
                 onItemClickListener = {
                     onCommentClickListener(commentItem)
                 },
-                tint = Color.Red.copy(alpha = (if (isFavorite) 1f else MaterialTheme.colors.onSecondary) as Float)
+                tint = Color.Black.copy(alpha = 0.4f)
             )
             val likesItem = statistics.getItemByType(StatisticType.LIKES)
             IconWithText(
-                iconResId = if(isFavorite) R.drawable.ic_like else R.drawable.ic_like_set,
+                iconResId = if(!isFavorite) R.drawable.ic_like else R.drawable.ic_like_set,
                 text = formatStatisticCount(likesItem.count),
                 onItemClickListener = {
                     onLikeClickListener(likesItem)
                 },
-                tint = Color.Red.copy(alpha = (if (isFavorite) 1f else MaterialTheme.colors.onSecondary) as Float)
+                tint = if(isFavorite) Color.Unspecified else  Color.Black.copy(alpha = 0.4f)
             )
         }
     }
 }
+
 private fun formatStatisticCount(count: Int): String {
     return if (count > 100_000) {
         String.format("%sK", (count / 1000))
@@ -170,13 +172,12 @@ private fun formatStatisticCount(count: Int): String {
 private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
     return this.find { it.type == type } ?: throw IllegalStateException()
 }
-
 @Composable
 private fun IconWithText(
     iconResId: Int,
     text: String,
     onItemClickListener: () -> Unit,
-    tint: Color
+    tint: Color = Color.Unspecified
 ) {
     Row(
         modifier = Modifier.clickable {
@@ -184,7 +185,8 @@ private fun IconWithText(
         },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(modifier = Modifier.size(20.dp),
+        Icon(
+            modifier = Modifier.size(20.dp),
             painter = painterResource(id = iconResId),
             contentDescription = null,
             tint = tint

@@ -1,5 +1,6 @@
 package com.example.vknewsclient.data.mapper
 
+
 import com.example.vknewsclient.data.model.NewsFeedResponseDto
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.domain.StatisticItem
@@ -21,8 +22,9 @@ class NewsFeedMapper {
             val group = groups.find { it.id == post.communityId.absoluteValue } ?: break
             val feedPost = FeedPost(
                 id = post.id,
+                communityId = post.communityId,
                 communityName = group.name,
-                publicationDate = mapTimestampToDate(post.date),
+                publicationDate = mapTimestampToDate(post.date * 1000),
                 communityImageUrl = group.imageUrl,
                 contentText = post.text,
                 contentImageUrl = post.attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
@@ -32,14 +34,15 @@ class NewsFeedMapper {
                     StatisticItem(type = StatisticType.SHARES, post.reposts.count),
                     StatisticItem(type = StatisticType.COMMENTS, post.comments.count)
                 ),
-                isFavorite = post.isFavourite
+                isLiked = post.likes.userLikes > 0
             )
             result.add(feedPost)
         }
         return result
     }
-    private fun mapTimestampToDate(seconds:Long):String{
-         val date = Date(seconds*1000)
-         return SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.getDefault()).format(date)
-     }
+
+    private fun mapTimestampToDate(timestamp: Long): String {
+        val date = Date(timestamp)
+        return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
+    }
 }
