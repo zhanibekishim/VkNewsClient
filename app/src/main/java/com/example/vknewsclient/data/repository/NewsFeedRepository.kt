@@ -2,6 +2,7 @@ package com.example.vknewsclient.data.repository
 
 
 import android.app.Application
+import android.util.Log
 import com.example.vknewsclient.data.mapper.NewsFeedMapper
 import com.example.vknewsclient.data.network.ApiFactory
 import com.example.vknewsclient.domain.FeedPost
@@ -66,5 +67,13 @@ class NewsFeedRepository(application: Application) {
         val newPost = feedPost.copy(statistics = newStatistics, isLiked = !feedPost.isLiked)
         val postIndex = _feedPosts.indexOf(feedPost)
         _feedPosts[postIndex] = newPost
+    }
+    suspend fun removePost(feedPost: FeedPost) {
+        apiService.ignorePost(
+            accessToken = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
+        )
+        _feedPosts.remove(feedPost)
     }
 }

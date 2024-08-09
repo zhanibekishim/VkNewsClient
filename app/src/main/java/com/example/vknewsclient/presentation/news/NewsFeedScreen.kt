@@ -45,7 +45,7 @@ fun NewsFeedScreen(
                 isDataLoading = currentState.isDataLoading
             )
         }
-        NewsFeedScreenState.Initial -> {
+        NewsFeedScreenState.Loading -> {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,6 +56,7 @@ fun NewsFeedScreen(
                 CircularProgressIndicator(color = Color.Magenta)
             }
         }
+        NewsFeedScreenState.Initial -> TODO()
     }
 
 }
@@ -104,14 +105,8 @@ fun FeedPosts(
                 PostCard(
                     modifier = Modifier,
                     feedPost = feedPost,
-                    onViewsClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
                     onLikeClickListener = { _ ->
                         viewModel.changeLikeStatus(feedPost)
-                    },
-                    onShareClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
                     },
                     onCommentClickListener = {
                         onCommentClickListener(feedPost)
