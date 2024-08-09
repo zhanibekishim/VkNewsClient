@@ -90,10 +90,10 @@ fun FeedPosts(
                     onViewsClickListener = { statisticItem ->
                         viewModel.updateCount(feedPost, statisticItem)
                     },
-                    onLikesClickListener = { statisticItem ->
+                    onLikeClickListener = { statisticItem ->
                         viewModel.updateCount(feedPost, statisticItem)
                     },
-                    onSharesClickListener = { statisticItem ->
+                    onShareClickListener = { statisticItem ->
                         viewModel.updateCount(feedPost, statisticItem)
                     },
                     onCommentClickListener = {

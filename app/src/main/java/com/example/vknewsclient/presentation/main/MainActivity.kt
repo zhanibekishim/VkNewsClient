@@ -8,6 +8,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vknewsclient.ui.theme.design.VkNewsClientTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
+import com.vk.id.auth.VKIDAuthUiParams
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     }
                     is AuthState.NotAuthorized -> {
                         LoginScreen {
-                            launcher.launch(listOf(VKScope.WALL))
+                            launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
                         }
                     }
                     else -> {
