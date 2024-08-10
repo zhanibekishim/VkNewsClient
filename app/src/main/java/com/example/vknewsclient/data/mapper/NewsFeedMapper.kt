@@ -1,7 +1,9 @@
 package com.example.vknewsclient.data.mapper
 
 
+import com.example.vknewsclient.data.model.CommentsResponseDto
 import com.example.vknewsclient.data.model.NewsFeedResponseDto
+import com.example.vknewsclient.domain.CommentPost
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.domain.StatisticItem
 import com.example.vknewsclient.domain.StatisticType
@@ -24,7 +26,7 @@ class NewsFeedMapper {
                 id = post.id,
                 communityId = post.communityId,
                 communityName = group.name,
-                publicationDate = mapTimestampToDate(post.date * 1000),
+                publicationDate = mapTimestampToDate(post.date ),
                 communityImageUrl = group.imageUrl,
                 contentText = post.text,
                 contentImageUrl = post.attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
@@ -40,9 +42,28 @@ class NewsFeedMapper {
         }
         return result
     }
+    fun mapResponseToComments(response: CommentsResponseDto): List<CommentPost> {
+        val result = mutableListOf<CommentPost>()
+        val comments = response.content.comments
+        val profiles = response.content.profiles
+        for (comment in comments) {
+            if (comment.text.isBlank()) continue
+            val author = profiles.firstOrNull { it.id == comment.authorId } ?: continue
+            val postComment = CommentPost(
+                id = comment.id,
+                authorName = "${author.firstName} ${author.lastName}",
+                authorAvatarUrl = author.avatarUrl,
+                commentText = comment.text,
+                publicationDate = mapTimestampToDate(comment.date)
+            )
+            result.add(postComment)
+        }
+        return result
+    }
+
 
     private fun mapTimestampToDate(timestamp: Long): String {
-        val date = Date(timestamp)
+        val date = Date(timestamp*1000)
         return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
     }
 }
