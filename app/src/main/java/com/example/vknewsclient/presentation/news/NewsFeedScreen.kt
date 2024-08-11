@@ -18,7 +18,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +35,7 @@ fun NewsFeedScreen(
     onCommentClickListener : (FeedPost) -> Unit
 ) {
     val viewModel : NewsFeedViewModel = viewModel()
-    val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
+    val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
     when (val currentState = screenState.value) {
         is NewsFeedScreenState.Posts -> {
             FeedPosts(
@@ -53,14 +53,14 @@ fun NewsFeedScreen(
                     .wrapContentHeight()
                     .padding(16.dp),
                 contentAlignment = Alignment.Center,
-            ) {
+            ){
                 CircularProgressIndicator(color = Color.Magenta)
             }
         }
-        NewsFeedScreenState.Initial -> TODO()
+        NewsFeedScreenState.Initial -> {}
+    }
     }
 
-}
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun FeedPosts(
@@ -122,7 +122,8 @@ fun FeedPosts(
                         .wrapContentHeight()
                         .padding(16.dp),
                     contentAlignment = Alignment.Center,
-                ){
+                )
+                {
                     CircularProgressIndicator(color = Color.Magenta)
                 }
             }else{
