@@ -1,4 +1,4 @@
-package com.example.vknewsclient.domain
+package com.example.vknewsclient.domain.entity
 
 data class CommentPost(
     val id :Long,

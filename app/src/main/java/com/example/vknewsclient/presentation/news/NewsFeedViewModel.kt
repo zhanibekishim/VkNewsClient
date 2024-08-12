@@ -3,15 +3,21 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vknewsclient.data.repository.NewsFeedRepository
-import com.example.vknewsclient.domain.FeedPost
+import com.example.vknewsclient.data.repository.NewsFeedRepositoryImpl
+import com.example.vknewsclient.domain.entity.FeedPost
+import com.example.vknewsclient.domain.usecases.ChangeLikeStatusUseCase
+import com.example.vknewsclient.domain.usecases.GetRecommendationsUseCase
+import com.example.vknewsclient.domain.usecases.LoadNextDataUseCase
+import com.example.vknewsclient.domain.usecases.RemoveFeedPostUseCase
 import com.example.vknewsclient.extentions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+
 import kotlinx.coroutines.launch
+
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,14 +25,19 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
         Log.d("NewsFeedViewModel", "Exception caught by exception handler")
     }
 
-    private val repository = NewsFeedRepository(application)
+    private val repository = NewsFeedRepositoryImpl(application)
 
-    private val recommendationsFlow = repository.recommendations
+    private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
+    private val loadNextDataUseCase = LoadNextDataUseCase(repository)
+    private val changeLikeStatusUseCase = ChangeLikeStatusUseCase(repository)
+    private val deletePostUseCase = RemoveFeedPostUseCase(repository)
+
+    private val recommendationsFlow = getRecommendationsUseCase()
 
     private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
 
     val screenState = recommendationsFlow
-        .filter { it.isNotEmpty() }
+        .filter{ it.isNotEmpty() }
         .map { NewsFeedScreenState.Posts(posts = it) as NewsFeedScreenState }
         .onStart { emit(NewsFeedScreenState.Loading) }
         .mergeWith(loadNextDataFlow)
@@ -39,19 +50,19 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
                     isDataLoading = true
                 )
             )
-            repository.loadNextData()
+            loadNextDataUseCase()
         }
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-            repository.changeLikeStatus(feedPost)
+            changeLikeStatusUseCase(feedPost)
         }
     }
 
     fun remove(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-            repository.deletePost(feedPost)
+            deletePostUseCase(feedPost)
         }
     }
 }

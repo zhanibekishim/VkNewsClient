@@ -40,14 +40,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.vknewsclient.R
-import com.example.vknewsclient.domain.CommentPost
-import com.example.vknewsclient.domain.FeedPost
+import com.example.vknewsclient.domain.entity.CommentPost
+import com.example.vknewsclient.domain.entity.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CommentsScreen(
-    feedPost :FeedPost,
+    feedPost : FeedPost,
     onBackPressed: () -> Unit
 ){
     val viewModel: CommentsViewModel = viewModel(

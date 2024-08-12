@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.vknewsclient.domain.FeedPost
+import com.example.vknewsclient.domain.entity.FeedPost
 
 
 @Composable

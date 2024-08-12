@@ -3,10 +3,10 @@ package com.example.vknewsclient.data.mapper
 
 import com.example.vknewsclient.data.model.CommentsResponseDto
 import com.example.vknewsclient.data.model.NewsFeedResponseDto
-import com.example.vknewsclient.domain.CommentPost
-import com.example.vknewsclient.domain.FeedPost
-import com.example.vknewsclient.domain.StatisticItem
-import com.example.vknewsclient.domain.StatisticType
+import com.example.vknewsclient.domain.entity.CommentPost
+import com.example.vknewsclient.domain.entity.FeedPost
+import com.example.vknewsclient.domain.entity.StatisticItem
+import com.example.vknewsclient.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
