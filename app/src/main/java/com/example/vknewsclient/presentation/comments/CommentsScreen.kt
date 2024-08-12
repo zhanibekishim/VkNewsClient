@@ -1,7 +1,6 @@
 package com.example.vknewsclient.presentation.comments
 
 import android.annotation.SuppressLint
-import android.app.Application
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,21 +42,31 @@ import coil.compose.AsyncImage
 import com.example.vknewsclient.R
 import com.example.vknewsclient.domain.entity.CommentPost
 import com.example.vknewsclient.domain.entity.FeedPost
+import com.example.vknewsclient.presentation.NewsFeedApplication
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CommentsScreen(
     feedPost : FeedPost,
     onBackPressed: () -> Unit
 ){
-    val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(feedPost = feedPost,
-        application = LocalContext.current.applicationContext as Application
-    ))
+    val component = (LocalContext.current.applicationContext as NewsFeedApplication)
+        .component
+        .getCommentsScreenComponentFactory()
+        .create(feedPost)
 
+    val viewModel: CommentsViewModel = viewModel(factory = component.getViewModelFactory())
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
 
+    CommentScreenContent(screenState,onBackPressed = onBackPressed)
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CommentScreenContent(
+    screenState: State<CommentsScreenState>,
+    onBackPressed: () -> Unit
+){
     when(val currentState = screenState.value){
         is CommentsScreenState.Comments -> {
             Scaffold(
@@ -108,7 +118,6 @@ fun CommentsScreen(
         CommentsScreenState.Initial -> {}
     }
 }
-
 @Composable
 private fun CommentItem(
     commentPost: CommentPost

@@ -28,9 +28,10 @@ import com.example.vknewsclient.presentation.comments.CommentsScreen
 import com.example.vknewsclient.presentation.news.NewsFeedScreen
 
 @Composable
-fun MainScreen() {
-    val navigationState = rememberNavigationState()
+fun MainScreen(
 
+) {
+    val navigationState = rememberNavigationState()
     val commentsToPost: MutableState<FeedPost?> = remember {
         mutableStateOf(null)
     }

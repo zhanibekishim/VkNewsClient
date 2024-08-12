@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -60,6 +61,11 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.dagger:dagger:2.52")
+    kapt("com.google.dagger:dagger-compiler:2.52")
+    annotationProcessor("com.google.dagger:dagger-compiler:2.52")
+
+
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
